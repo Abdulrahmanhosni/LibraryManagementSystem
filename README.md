@@ -1,72 +1,81 @@
-# Library Management System
+Library Management System
 
-نظام إدارة مكتبة مبني باستخدام .NET 10 وEntity Framework Core وSQL Server.
+A console-based library management system built with .NET 10, Entity Framework Core, and SQL Server. Demonstrates Code-First approach, entity configuration, database migrations, and seed data.
 
-## المتطلبات
+Tech Stack
+	
+Runtime	.NET 10
+ORM	Entity Framework Core 10 (Code-First)
+Database	SQL Server
+Configuration	appsettings.json
+Features
+Code-First database design with EF Core Migrations
+Separate IEntityTypeConfiguration per entity
+Many-to-Many relationship between Book and Category
+Automatic migration on startup
+Seed data via DbSeeder
+Clean error handling for connection and database errors
+Project Structure
+LibraryManagementSystem/
+├── Configurations/
+│   ├── AuthorConfig.cs
+│   ├── BookConfig.cs
+│   ├── CategoryConfig.cs
+│   ├── LoanConfig.cs
+│   └── MemberConfig.cs
+├── Data/
+│   ├── DbSeeder.cs
+│   ├── DbSettings.cs
+│   ├── LibraryDbContext.cs
+│   └── LibraryDbContextFactory.cs
+├── Migrations/
+├── Models/
+│   ├── Author.cs
+│   ├── Book.cs
+│   ├── Category.cs
+│   ├── Loan.cs
+│   └── Member.cs
+├── Program.cs
+└── appsettings.example.json
+Relationships
+Author → Book : One-to-Many
+Book ↔ Category : Many-to-Many
+Book → Loan : One-to-Many
+Member → Loan : One-to-Many
+Getting Started
+Prerequisites
+.NET 10 SDK
+SQL Server (local or remote)
+EF Core CLI: dotnet tool install --global dotnet-ef
+Setup
 
-- .NET 10 SDK
-- SQL Server
-- Visual Studio 2026 أو أي محرر يدعم .NET 10
-- أداة Entity Framework Core CLI عند الحاجة إلى تنفيذ أوامر migrations
+1. Clone the repository
 
-## إعداد المشروع
+bash
+git clone https://github.com/Abdulrahmanhosni/LibraryManagementSystem.git
+cd LibraryManagementSystem
 
-1. انسخ الملف:
+2. Configure your connection string
 
-   `LibraryManagementSystem/appsettings.example.json`
+Copy appsettings.example.json and create appsettings.json:
 
-   إلى:
+json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=YOUR_SERVER;Database=LibraryDB;Trusted_Connection=True;TrustServerCertificate=True;"
+  }
+}
 
-   `LibraryManagementSystem/appsettings.json`
+3. Run the project
 
-2. عدّل connection string داخل `appsettings.json` ليتوافق مع إعدادات SQL Server على جهازك.
-
-3. استعد الحزم وابنِ المشروع:
-
-   ```powershell
-   dotnet restore
-   dotnet build
-   ```
-
-## التشغيل
-
-شغّل المشروع باستخدام:
-
-```powershell
+bash
 dotnet run --project LibraryManagementSystem/LibraryManagementSystem.csproj
-```
 
-عند التشغيل يتم تطبيق الـ migrations تلقائيًا، ثم يتم إدخال البيانات التجريبية إذا كانت قاعدة البيانات فارغة.
+Migrations are applied automatically on startup. Seed data is inserted if the database is empty.
 
-## Migrations
-
-لتطبيق الـ migrations يدويًا:
-
-```powershell
+Manual Migrations
+bash
 dotnet ef database update --project LibraryManagementSystem/LibraryManagementSystem.csproj
-```
+Security Note
 
-لإنشاء migration جديدة:
-
-```powershell
-dotnet ef migrations add MigrationName --project LibraryManagementSystem/LibraryManagementSystem.csproj
-```
-
-## هيكل المشروع
-
-- `Models/`: كيانات المؤلفين والكتب والتصنيفات والأعضاء والإعارات.
-- `Configurations/`: إعدادات EF Core والعلاقات بين الجداول.
-- `Data/`: DbContext وFactory وبيانات seed وإعدادات قاعدة البيانات.
-- `Migrations/`: migrations الخاصة بقاعدة البيانات.
-- `appsettings.example.json`: نموذج إعدادات بدون بيانات شخصية.
-
-## العلاقات
-
-- Author وBook: one-to-many.
-- Book وCategory: many-to-many.
-- Book وLoan: one-to-many.
-- Member وLoan: one-to-many.
-
-## ملاحظة أمنية
-
-ملف `appsettings.json` محلي ولا يجب رفعه إلى GitHub لأنه قد يحتوي على بيانات اتصال خاصة. استخدم `appsettings.example.json` كنموذج للإعدادات.
+appsettings.json is excluded from source control via .gitignore. Use appsettings.example.json as a template.
