@@ -1,8 +1,8 @@
 ﻿using LibraryManagementSystem.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-try 
-{ 
+try
+{
     var options = new DbContextOptionsBuilder<LibraryDbContext>()
         .UseSqlServer(DbSettings.ConnectionString)
         .Options;
@@ -11,14 +11,14 @@ try
     context.Database.Migrate();
     DbSeeder.Seed(context);
 
-    // 1. Retrieve all completed loans (books that have been returned)
-    Console.WriteLine("\n--- Currently Borrowed ---");
-    var returnedLoans = context.Loans.
-                Include(l => l.Book)
+    // 1. Retrieve currently borrowed books (not yet returned)
+    Console.WriteLine("\n--- Currently Borrowed Books ---");
+    var activeLoans = context.Loans.
+    Include(l => l.Book)
                 .Include(l => l.Member)
                 .Where(l => l.ReturnDate == null)
                 .ToList();
-    foreach (var loan in returnedLoans)
+    foreach (var loan in activeLoans)
     {
         Console.WriteLine($"Loan ID: {loan.Id}, Book: {loan.Book.Title}, Member: {loan.Member.FullName}");
     }
@@ -27,8 +27,8 @@ try
     // 2. Retrieve overdue loans (books not yet returned past their due date)
     Console.WriteLine("\n--- Overdue Loans ---");
 
-    var overdueLoans = context.Loans.
-                Include(l => l.Book)
+    var overdueLoans = context.Loans
+                .Include(l => l.Book)
                 .Include(l => l.Member)
                 .Where(l => l.ReturnDate == null && l.DueDate < DateTime.Today)
                 .ToList();
